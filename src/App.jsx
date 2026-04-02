@@ -111,7 +111,7 @@ const newRawData = [
   { q: "Điều nào sau đây không phải là một nhược điểm của Design System?", opts: ["A. Cần đầu tư thời gian và nguồn lực ban đầu để xây dựng", "B. Có thể giới hạn sự sáng tạo của nhà thiết kế", "C. Tăng khả năng mở rộng và bảo trì giao diện sản phẩm", "D. Khó khăn trong việc áp dụng đồng bộ khi có quá nhiều thành viên trong nhóm"], ans: [2] }
 ].map((item, idx) => ({ ...item, id: idx + 1 }));
 
-const txtRawData = [
+const txtLatestRawData = [
   { q: "UX Research là gì?", opts: ["A. Nghiên cứu hành vi và nhu cầu của người dùng để cải thiện sản phẩm.", "B. Một phương pháp lập trình phần mềm.", "C. Quá trình thiết kế giao diện người dùng (UI).", "D. Một phần của tiếp thị sản phẩm."], ans: [0] },
   { q: "Phương pháp UX Research nào dưới đây là nghiên cứu định tính?", opts: ["A. Phỏng vấn người dùng", "B. Khảo sát trực tuyến", "C. A/B Testing", "D. Eye-tracking"], ans: [0] },
   { q: "Nghiên cứu UX chủ yếu giúp cải thiện điều gì?", opts: ["A. Tăng lượng người dùng", "B. Cải thiện trải nghiệm người dùng", "C. Giảm chi phí phát triển phần mềm", "D. Tăng thứ hạng SEO"], ans: [1] },
@@ -213,10 +213,13 @@ const txtRawData = [
   { q: "Yếu tố nào sau đây giúp tối ưu hóa quá trình Design Thinking?", opts: ["A. Lặp lại các giai đoạn nếu cần thiết", "B. Chỉ thử nghiệm một lần để tiết kiệm thời gian", "C. Tập trung vào công nghệ thay vì nhu cầu người dùng", "D. Cố gắng tìm ra một giải pháp duy nhất ngay từ đầu"], ans: [0] }
 ].map((item, idx) => ({ ...item, id: idx + 1 }));
 
+const txtSavedRawData = newRawData.map(item => ({ ...item }));
+
 const quizSetsSeed = [
   { id: 'old', description: 'Bộ câu hỏi gốc', data: oldRawData },
   { id: 'new', description: 'Bộ câu hỏi mới', data: newRawData },
-  { id: 'txt', description: 'Bộ câu hỏi từ text.txt', data: txtRawData }
+  { id: 'txt', description: 'Bộ câu hỏi từ text.txt (đã lưu)', data: txtSavedRawData },
+  { id: 'txt-latest', description: 'Bộ câu hỏi từ text.txt (mới nhất)', data: txtLatestRawData }
 ];
 
 const quizSets = quizSetsSeed.map((set, index) => ({

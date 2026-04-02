@@ -111,10 +111,15 @@ const newRawData = [
   { q: "Điều nào sau đây không phải là một nhược điểm của Design System?", opts: ["A. Cần đầu tư thời gian và nguồn lực ban đầu để xây dựng", "B. Có thể giới hạn sự sáng tạo của nhà thiết kế", "C. Tăng khả năng mở rộng và bảo trì giao diện sản phẩm", "D. Khó khăn trong việc áp dụng đồng bộ khi có quá nhiều thành viên trong nhóm"], ans: [2] }
 ].map((item, idx) => ({ ...item, id: idx + 1 }));
 
-const quizSets = [
-  { id: 'old', title: 'Bộ câu hỏi gốc', data: oldRawData },
-  { id: 'new', title: 'Bộ câu hỏi mới', data: newRawData }
+const quizSetsSeed = [
+  { id: 'old', description: 'Bộ câu hỏi gốc', data: oldRawData },
+  { id: 'new', description: 'Bộ câu hỏi mới', data: newRawData }
 ];
+
+const quizSets = quizSetsSeed.map((set, index) => ({
+  ...set,
+  title: `C${index + 1}-VA`
+}));
 
 const isCorrect = (userAns, correctAns) => {
   if (!userAns || userAns.length === 0) return false;
@@ -454,7 +459,8 @@ export default function App() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {quizSets.map(quiz => (
             <button key={quiz.id} onClick={() => setSelectedQuizId(quiz.id)} className="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md rounded-xl p-6 text-left transition-all">
-              <h2 className="text-xl font-bold text-gray-900 mb-2">{quiz.title}</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-1">{quiz.title}</h2>
+              <div className="text-sm text-gray-500 mb-2">{quiz.description}</div>
               <div className="text-blue-700 font-semibold">{quiz.data.length} câu hỏi</div>
             </button>
           ))}

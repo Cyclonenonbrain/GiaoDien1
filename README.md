@@ -1,6 +1,6 @@
 # UI/UX Quiz App (Vite + React + Tailwind)
 
-Ứng dụng trắc nghiệm UI/UX bằng tiếng Việt, gồm đầy đủ bộ câu hỏi theo đề gốc.
+Ứng dụng trắc nghiệm UI/UX bằng tiếng Việt, hỗ trợ nhiều bộ câu hỏi và màn chọn bộ trước khi làm bài.
 
 ## Chạy local
 
@@ -27,6 +27,12 @@ npm run build
 ```bash
 npm run preview
 ```
+
+## Quy ước tiêu đề bộ câu hỏi
+
+- Tên hiển thị chuẩn: `C1-VA`, `C2-VA`, `C3-VA`, ...
+- App tự đánh số theo thứ tự trong `quizSetsSeed` ở `src/App.jsx`.
+- Khi thêm bộ mới cho lần sau, chỉ cần thêm vào `quizSetsSeed`, tiêu đề chuẩn sẽ tự áp dụng.
 
 ## Deploy GitHub Pages (tự động bằng GitHub Actions)
 

@@ -111,9 +111,12 @@ const newRawData = [
   { q: "Điều nào sau đây không phải là một nhược điểm của Design System?", opts: ["A. Cần đầu tư thời gian và nguồn lực ban đầu để xây dựng", "B. Có thể giới hạn sự sáng tạo của nhà thiết kế", "C. Tăng khả năng mở rộng và bảo trì giao diện sản phẩm", "D. Khó khăn trong việc áp dụng đồng bộ khi có quá nhiều thành viên trong nhóm"], ans: [2] }
 ].map((item, idx) => ({ ...item, id: idx + 1 }));
 
+const txtRawData = newRawData.map(item => ({ ...item }));
+
 const quizSetsSeed = [
   { id: 'old', description: 'Bộ câu hỏi gốc', data: oldRawData },
-  { id: 'new', description: 'Bộ câu hỏi mới', data: newRawData }
+  { id: 'new', description: 'Bộ câu hỏi mới', data: newRawData },
+  { id: 'txt', description: 'Bộ câu hỏi từ text.txt', data: txtRawData }
 ];
 
 const quizSets = quizSetsSeed.map((set, index) => ({

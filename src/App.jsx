@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Check, X, AlertCircle, RefreshCw, X as XIcon, Menu, Clock } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Check, AlertCircle, RefreshCw, X as XIcon, Menu, Clock, ArrowLeft } from 'lucide-react';
 
-// Dữ liệu câu hỏi được chuẩn hóa và đánh số lại từ 1 đến 64
-const rawData = [
+const oldRawData = [
   { q: "Trong thiết kế UI, yếu tố nào quan trọng nhất khi chọn font chữ?", opts: ["A. Tính dễ đọc (Legibility)", "B. Số lượng biến thể của font", "C. Sự phức tạp của kiểu chữ", "D. Chỉ cần đẹp mắt, không quan trọng tính dễ đọc"], ans: [0] },
   { q: "Khi sử dụng quá nhiều font chữ khác nhau trong cùng một thiết kế UI, điều gì có thể xảy ra?", opts: ["A. Làm cho giao diện chuyên nghiệp hơn", "B. Giúp phân biệt các nội dung rõ ràng hơn", "C. Khiến thiết kế trở nên rối mắt và thiếu nhất quán", "D. Không có ảnh hưởng gì"], ans: [2] },
   { q: "Trong thiết kế UI, vì sao nên sử dụng hệ thống phân cấp typographic (typographic hierarchy)?", opts: ["A. Để người dùng dễ dàng quét (scan) nội dung", "B. Giúp thiết kế trông nghệ thuật hơn", "C. Để tạo ra sự đa dạng trong cách trình bày nội dung", "D. Chỉ để làm đẹp giao diện"], ans: [0] },
@@ -69,7 +68,54 @@ const rawData = [
   { q: "Trong phương pháp Card Sorting, người dùng sẽ làm gì?", opts: ["A. Sắp xếp các thành phần giao diện theo cách họ thấy hợp lý", "B. Kiểm tra tốc độ tải trang", "C. Thực hiện thao tác kéo-thả để kiểm tra khả năng phản hồi của UI", "D. Điền vào bảng khảo sát đánh giá màu sắc giao diện"], ans: [0] }
 ].map((item, idx) => ({ ...item, id: idx + 1 }));
 
-// Hàm so sánh mảng đáp án
+const newRawData = [
+  { q: "Yếu tố nào không thuộc về UI?", opts: ["A. Màu sắc", "B. Khoảng cách giữa các phần tử", "C. Cảm xúc người dùng khi sử dụng ứng dụng", "D. Kiểu chữ"], ans: [2] },
+  { q: "Khi chọn màu nền cho văn bản, yếu tố quan trọng nhất là gì?", opts: ["A. Độ tương phản", "B. Độ sáng của màn hình", "C. Số lượng màu sắc được sử dụng", "D. Độ bão hòa của màu sắc"], ans: [0] },
+  { q: "Điều nào giúp cải thiện trải nghiệm người dùng trên ứng dụng web?", opts: ["A. Giảm số lần nhấp chuột để hoàn thành tác vụ", "B. Dùng quá nhiều hiệu ứng động", "C. Hiển thị quảng cáo liên tục", "D. Thiết kế giao diện phức tạp"], ans: [0] },
+  { q: "Nguyên tắc \"K.I.S.S\" trong thiết kế UI/UX có nghĩa là gì?", opts: ["A. Keep It Simple and Stupid", "B. Keep It Stylish and Smooth", "C. Keep It Super Simple", "D. Keep It Systematic and Secure"], ans: [0] },
+  { q: "Trong hệ thống lưới (grid system), đơn vị phổ biến nhất là gì?", opts: ["A. Pixel", "B. Em", "C. Column", "D. Percentage"], ans: [2] },
+  { q: "Khi thiết kế UI, vì sao cần sử dụng khoảng trắng hợp lý?", opts: ["A. Để tạo khoảng nghỉ cho mắt người dùng", "B. Để giảm kích thước trang web", "C. Để tăng độ phức tạp của giao diện", "D. Để làm cho trang web tải nhanh hơn"], ans: [0] },
+  { q: "Font chữ nào phù hợp nhất để đọc trên màn hình?", opts: ["A. Comic Sans", "B. Times New Roman", "C. Arial", "D. Vivaldi"], ans: [2] },
+  { q: "Điều nào sau đây không phải là một thành phần của UI?", opts: ["A. Layout", "B. Typography", "C. Cảm nhận của người dùng", "D. Màu sắc"], ans: [2] },
+  { q: "Yếu tố nào giúp tăng tính truy cập (accessibility) của một trang web?", opts: ["A. Văn bản thay thế cho hình ảnh (alt text)", "B. Dùng nhiều hiệu ứng động", "C. Sử dụng màu sắc tương phản thấp", "D. Giảm kích thước chữ"], ans: [0] },
+  { q: "Điều nào giúp nâng cao trải nghiệm người dùng khi nhập dữ liệu?", opts: ["A. Hiển thị gợi ý khi nhập liệu", "B. Bắt buộc nhập tất cả các trường", "C. Không hiển thị thông báo lỗi", "D. Sử dụng CAPTCHA phức tạp"], ans: [0] },
+  { q: "Quy tắc 3-click trong UI/UX có nghĩa là gì?", opts: ["A. Người dùng nên hoàn thành tác vụ trong tối đa 3 lần nhấp chuột", "B. Website chỉ được phép có 3 liên kết chính", "C. Một chức năng chỉ có thể sử dụng 3 lần", "D. Menu chính chỉ nên có 3 mục"], ans: [0] },
+  { q: "Flat design là gì?", opts: ["A. Phong cách thiết kế tối giản, không có hiệu ứng 3D", "B. Giao diện web chỉ có một màu duy nhất", "C. Thiết kế sử dụng nhiều hiệu ứng bóng đổ", "D. Thiết kế tập trung vào hình ảnh động"], ans: [0] },
+  { q: "Tại sao responsive design quan trọng?", opts: ["A. Giúp trang web hoạt động tốt trên nhiều kích thước màn hình", "B. Giảm dung lượng hình ảnh", "C. Tăng tốc độ tải trang", "D. Hạn chế sử dụng JavaScript"], ans: [0] },
+  { q: "Nguyên tắc Fitts' Law trong thiết kế UI đề cập đến gì?", opts: ["A. Kích thước và khoảng cách của các đối tượng ảnh hưởng đến tốc độ tương tác của người dùng", "B. Mắt người dùng quét nội dung theo hình chữ \"F\"", "C. Người dùng thích bấm vào các nút lớn hơn", "D. Một trang web cần tối thiểu 3 giây để tải"], ans: [0] },
+  { q: "Heatmap trong UX có tác dụng gì?", opts: ["A. Theo dõi vùng người dùng tương tác nhiều nhất trên giao diện", "B. Đo lường thời gian tải trang", "C. Xác định màu sắc phổ biến của trang web", "D. Kiểm tra tốc độ cuộn trang"], ans: [0] },
+  { q: "A/B Testing trong UI/UX là gì?", opts: ["A. So sánh hai phiên bản thiết kế để chọn phiên bản tốt hơn", "B. Đánh giá hai trang web cùng lúc", "C. Một phương pháp kiểm tra lỗi trên giao diện", "D. Một kiểu thiết kế đặc biệt"], ans: [0] },
+  { q: "Các yếu tố nào giúp tối ưu SEO cho UI/UX?", opts: ["A. Cấu trúc URL rõ ràng", "B. Hiển thị nhiều pop-up", "C. Sử dụng quá nhiều hiệu ứng động", "D. Dùng văn bản màu sáng trên nền sáng"], ans: [0] },
+  { q: "Bạn đang thiết kế một trang web thương mại điện tử. Điều nào sau đây giúp cải thiện UX khi người dùng tìm kiếm sản phẩm?", opts: ["A. Hiển thị gợi ý tìm kiếm khi người dùng nhập từ khóa", "B. Chỉ cho phép tìm kiếm theo danh mục sản phẩm", "C. Tự động sửa lỗi chính tả trong từ khóa tìm kiếm", "D. Ẩn thanh tìm kiếm để tránh làm rối giao diện"], ans: [0, 2] },
+  { q: "Khi thiết kế form đăng ký tài khoản, điều nào giúp giảm tỷ lệ từ bỏ form?", opts: ["A. Hiển thị tiến trình đăng ký theo từng bước", "B. Bắt buộc nhập lại mật khẩu hai lần mà không có tùy chọn hiển thị mật khẩu", "C. Sử dụng nhãn (label) rõ ràng và đặt placeholder để hướng dẫn nhập liệu", "D. Yêu cầu người dùng nhập tất cả thông tin cá nhân ngay từ bước đầu tiên"], ans: [0, 2] },
+  { q: "Bạn đang thiết kế một ứng dụng đặt xe. Điều nào giúp cải thiện trải nghiệm người dùng?", opts: ["A. Hiển thị vị trí tài xế theo thời gian thực trên bản đồ", "B. Chỉ hiển thị vị trí tài xế sau khi xác nhận đặt xe", "C. Cung cấp thông tin chi tiết về tài xế và biển số xe trước khi xe đến đón", "D. Không cần xác nhận giá cước trước khi đặt xe"], ans: [0, 2] },
+  { q: "Trong một ứng dụng ngân hàng số, yếu tố nào giúp tăng cường trải nghiệm và bảo mật cho người dùng?", opts: ["A. Cho phép đăng nhập bằng sinh trắc học (vân tay, Face ID)", "B. Tự động đăng xuất sau một khoảng thời gian không hoạt động", "C. Bắt buộc nhập lại mật khẩu mỗi lần giao dịch, dù là số tiền nhỏ", "D. Không hiển thị thông báo lỗi cụ thể khi nhập sai mật khẩu"], ans: [0, 1] },
+  { q: "Khi thiết kế giao diện mobile app, điều nào giúp tăng tỷ lệ chuyển đổi (conversion rate)?", opts: ["A. Nút CTA (Call to Action) lớn, dễ nhìn và nằm trong vùng có thể chạm bằng ngón tay", "B. Yêu cầu người dùng tạo tài khoản trước khi hiển thị bất kỳ nội dung nào", "C. Giảm số lượng bước khi thực hiện thanh toán", "D. Hiển thị quảng cáo toàn màn hình ngay khi người dùng mở ứng dụng"], ans: [0, 2] },
+  { q: "Một website bán hàng muốn tăng trải nghiệm người dùng khi xem sản phẩm. Điều nào là cách tiếp cận đúng?", opts: ["A. Cung cấp ảnh sản phẩm độ phân giải cao, có thể phóng to chi tiết", "B. Hiển thị quá nhiều thông tin kỹ thuật trên trang sản phẩm", "C. Cung cấp đánh giá từ khách hàng khác ngay trên trang sản phẩm", "D. Tự động phát video quảng cáo sản phẩm mà không có nút tắt"], ans: [0, 2] },
+  { q: "Khi thiết kế menu điều hướng trên website, điều nào giúp cải thiện trải nghiệm người dùng?", opts: ["A. Sử dụng menu cố định (sticky menu) trên trang web dài", "B. Ẩn menu và chỉ hiển thị khi người dùng di chuột vào góc màn hình", "C. Đặt tất cả các danh mục trong một menu duy nhất, không phân nhóm", "D. Sử dụng tối đa 7 mục chính trong menu để tránh gây quá tải thông tin"], ans: [0] },
+  { q: "Một ứng dụng giao hàng cần cải thiện UX. Điều nào sau đây là giải pháp hợp lý?", opts: ["A. Hiển thị dự kiến thời gian giao hàng dựa trên vị trí thực tế", "B. Chỉ thông báo trạng thái đơn hàng khi người dùng tự kiểm tra", "C. Cung cấp tùy chọn thay đổi địa chỉ giao hàng ngay trước khi giao", "D. Chỉ gửi thông báo qua email, không có thông báo trong ứng dụng"], ans: [0, 2] },
+  { q: "Bạn đang thiết kế trang web tin tức. Điều nào giúp giữ chân người đọc lâu hơn?", opts: ["A. Hiển thị nội dung liên quan sau mỗi bài viết", "B. Không cho phép đọc bài viết nếu chưa đăng nhập", "C. Tự động tải bài viết tiếp theo khi cuộn đến cuối trang", "D. Sử dụng quá nhiều quảng cáo giữa nội dung bài viết"], ans: [0, 2] },
+  { q: "Một website cần cải thiện tốc độ tải trang để nâng cao trải nghiệm. Điều nào là cách tiếp cận đúng?", opts: ["A. Tối ưu hình ảnh bằng cách sử dụng định dạng WebP", "B. Giảm số lượng yêu cầu HTTP bằng cách gộp file CSS và JavaScript", "C. Tăng kích thước ảnh để đảm bảo chất lượng hiển thị tốt hơn", "D. Tắt cache trình duyệt để luôn tải dữ liệu mới"], ans: [0, 1] },
+  { q: "Phương pháp nào thường được sử dụng để đánh giá khả năng sử dụng (usability) của giao diện?", opts: ["A. Kiểm thử người dùng (User Testing)", "B. Phân tích heuristic (Heuristic Evaluation)", "C. A/B Testing", "D. So sánh với các trang web đối thủ mà không cần thử nghiệm"], ans: [0, 1] },
+  { q: "Khi thực hiện A/B Testing trên UI, điều nào là đúng?", opts: ["A. Chỉ nên thay đổi một yếu tố tại một thời điểm", "B. Có thể thử nghiệm nhiều yếu tố cùng lúc mà không ảnh hưởng đến kết quả", "C. A/B Testing chỉ áp dụng cho giao diện web, không áp dụng cho mobile app", "D. Cần có một lượng dữ liệu đủ lớn để đảm bảo kết quả có ý nghĩa thống kê"], ans: [0, 3] },
+  { q: "Khi thực hiện phỏng vấn người dùng để đánh giá UX, điều nào là quan trọng nhất?", opts: ["A. Đặt câu hỏi mở để người dùng chia sẻ trải nghiệm thực tế", "B. Hướng dẫn người dùng trả lời theo cách mình mong muốn", "C. Ghi nhận cả phản hồi tích cực và tiêu cực", "D. Chỉ tập trung vào các phản hồi tiêu cực để cải thiện sản phẩm"], ans: [0, 2] },
+  { q: "Design System là gì?", opts: ["A. Một bộ tài liệu hướng dẫn về UI/UX giúp tạo sự nhất quán trong thiết kế", "B. Một tập hợp các mẫu giao diện UI đã được lập trình sẵn", "C. Một hệ thống giúp các nhà thiết kế và lập trình viên làm việc hiệu quả hơn", "D. Một bộ quy tắc chỉ áp dụng cho thiết kế ứng dụng di động"], ans: [0, 2] },
+  { q: "Thành phần chính của một Design System là gì?", opts: ["A. Thư viện UI Components", "B. Hướng dẫn về màu sắc, typography, khoảng cách", "C. Tài liệu hướng dẫn cách phát triển hệ thống backend", "D. Nguyên tắc thiết kế và quy trình làm việc"], ans: [0, 1, 3] },
+  { q: "Lợi ích chính của Design System trong thiết kế UI/UX là gì?", opts: ["A. Tăng tốc độ thiết kế và phát triển sản phẩm", "B. Giúp giao diện có tính nhất quán trên nhiều nền tảng", "C. Giảm số lượng lỗi thiết kế không đồng nhất", "D. Hạn chế sự sáng tạo của nhà thiết kế"], ans: [0, 1, 2] },
+  { q: "Atomic Design là gì?", opts: ["A. Một phương pháp tổ chức UI Components theo các cấp độ từ nhỏ đến lớn", "B. Một loại framework frontend", "C. Chỉ áp dụng cho thiết kế web tĩnh", "D. Bao gồm các thành phần: Atoms, Molecules, Organisms, Templates, Pages"], ans: [0, 3] },
+  { q: "Trong Design System, thành phần nào giúp đảm bảo tính nhất quán về nội dung?", opts: ["A. Content Guidelines", "B. Design Tokens", "C. UI Components", "D. Brand Identity"], ans: [0] },
+  { q: "Design Tokens được sử dụng để làm gì trong Design System?", opts: ["A. Lưu trữ các giá trị thiết kế như màu sắc, khoảng cách, typography", "B. Tạo các mẫu giao diện động", "C. Là một công cụ lập trình backend", "D. Giúp tùy chỉnh giao diện linh hoạt hơn trên các nền tảng khác nhau"], ans: [0, 3] },
+  { q: "Khi nào nên xây dựng hoặc áp dụng Design System?", opts: ["A. Khi muốn tạo giao diện nhất quán trên nhiều sản phẩm", "B. Khi đội ngũ thiết kế và phát triển phải làm việc cùng nhau", "C. Chỉ khi sản phẩm đã hoàn thiện", "D. Khi cần tăng tốc độ phát triển UI"], ans: [0, 1, 3] },
+  { q: "Trong một Design System, nguyên tắc nào giúp tạo trải nghiệm người dùng tốt hơn?", opts: ["A. Tính nhất quán trong thiết kế và trải nghiệm", "B. Linh hoạt để dễ dàng tùy chỉnh khi cần thiết", "C. Không cần tuân thủ bất kỳ quy tắc nào để tăng tính sáng tạo", "D. Đảm bảo khả năng truy cập (Accessibility) cho mọi người dùng"], ans: [0, 1, 3] },
+  { q: "Một số Design System phổ biến hiện nay là gì?", opts: ["A. Google Material Design", "B. Apple Human Interface Guidelines", "C. Bootstrap Grid System", "D. Atlassian Design System"], ans: [0, 1, 3] },
+  { q: "Điều nào sau đây không phải là một nhược điểm của Design System?", opts: ["A. Cần đầu tư thời gian và nguồn lực ban đầu để xây dựng", "B. Có thể giới hạn sự sáng tạo của nhà thiết kế", "C. Tăng khả năng mở rộng và bảo trì giao diện sản phẩm", "D. Khó khăn trong việc áp dụng đồng bộ khi có quá nhiều thành viên trong nhóm"], ans: [2] }
+].map((item, idx) => ({ ...item, id: idx + 1 }));
+
+const quizSets = [
+  { id: 'old', title: 'Bộ câu hỏi gốc', data: oldRawData },
+  { id: 'new', title: 'Bộ câu hỏi mới', data: newRawData }
+];
+
 const isCorrect = (userAns, correctAns) => {
   if (!userAns || userAns.length === 0) return false;
   if (userAns.length !== correctAns.length) return false;
@@ -78,7 +124,6 @@ const isCorrect = (userAns, correctAns) => {
   return sortedUser.every((val, index) => val === sortedCorrect[index]);
 };
 
-// Component Modal tùy chỉnh thay thế cho window.confirm
 const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText = "Xác nhận", cancelText = "Hủy" }) => {
   if (!isOpen) return null;
   return (
@@ -99,68 +144,53 @@ const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, confirmText
   );
 };
 
-export default function App() {
+const QuizScreen = ({ quiz, onBack }) => {
   const [answers, setAnswers] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '', type: '' });
+  const data = quiz.data;
 
-  useEffect(() => {
-    document.title = "Đề kiểm tra UI/UX Design";
-  }, []);
-
-  // Xử lý chọn đáp án
   const handleOptionChange = (questionId, optionIndex, isMultiple) => {
     if (isSubmitted) return;
     setAnswers(prev => {
-      if (!isMultiple) {
-        return { ...prev, [questionId]: [optionIndex] };
-      } else {
-        const current = prev[questionId] || [];
-        if (current.includes(optionIndex)) {
-          return { ...prev, [questionId]: current.filter(i => i !== optionIndex) };
-        } else {
-          return { ...prev, [questionId]: [...current, optionIndex] };
-        }
-      }
+      if (!isMultiple) return { ...prev, [questionId]: [optionIndex] };
+      const current = prev[questionId] || [];
+      if (current.includes(optionIndex)) return { ...prev, [questionId]: current.filter(i => i !== optionIndex) };
+      return { ...prev, [questionId]: [...current, optionIndex] };
     });
   };
 
-  // Cuộn tới câu hỏi
   const scrollToQuestion = (id) => {
     const el = document.getElementById(`question-${id}`);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setIsMenuOpen(false);
   };
 
-  // Mở modal yêu cầu nộp bài
   const handleRequestSubmit = () => {
     const answeredCount = Object.keys(answers).length;
-    if (answeredCount < rawData.length) {
+    if (answeredCount < data.length) {
       setModalConfig({
         isOpen: true,
         title: 'Chưa hoàn thành',
-        message: `Bạn mới làm được ${answeredCount}/${rawData.length} câu. Bạn có chắc chắn muốn nộp bài không?`,
+        message: `Bạn mới làm được ${answeredCount}/${data.length} câu. Bạn có chắc chắn muốn nộp bài không?`,
         type: 'submit',
         confirmText: 'Nộp bài',
         cancelText: 'Tiếp tục làm'
       });
-    } else {
-      setModalConfig({
-        isOpen: true,
-        title: 'Xác nhận nộp bài',
-        message: 'Bạn có chắc chắn muốn nộp bài thi này?',
-        type: 'submit',
-        confirmText: 'Nộp bài',
-        cancelText: 'Hủy'
-      });
+      return;
     }
+    setModalConfig({
+      isOpen: true,
+      title: 'Xác nhận nộp bài',
+      message: 'Bạn có chắc chắn muốn nộp bài thi này?',
+      type: 'submit',
+      confirmText: 'Nộp bài',
+      cancelText: 'Hủy'
+    });
   };
 
-  // Mở modal yêu cầu làm lại
   const handleRequestRetry = () => {
     setModalConfig({
       isOpen: true,
@@ -172,16 +202,11 @@ export default function App() {
     });
   };
 
-  // Xử lý khi xác nhận trên Modal
   const handleConfirmModal = () => {
     if (modalConfig.type === 'submit') {
       setIsSubmitted(true);
       let currentScore = 0;
-      rawData.forEach(q => {
-        if (isCorrect(answers[q.id], q.ans)) {
-          currentScore++;
-        }
-      });
+      data.forEach(q => { if (isCorrect(answers[q.id], q.ans)) currentScore++; });
       setScore(currentScore);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (modalConfig.type === 'retry') {
@@ -194,27 +219,20 @@ export default function App() {
   };
 
   const answeredCount = Object.keys(answers).length;
-  const progressPercent = (answeredCount / rawData.length) * 100;
+  const progressPercent = (answeredCount / data.length) * 100;
 
-  // Render lưới câu hỏi bên phải
   const QuestionGrid = () => (
     <div className="grid grid-cols-5 gap-2 max-h-[45vh] md:max-h-[55vh] overflow-y-auto mb-4 p-1 custom-scrollbar">
-      {rawData.map(q => {
+      {data.map(q => {
         const isAnswered = answers[q.id] && answers[q.id].length > 0;
         const isRight = isCorrect(answers[q.id], q.ans);
-
         let btnClass = "bg-white text-gray-700 border-gray-300 hover:bg-gray-50";
         if (!isSubmitted && isAnswered) btnClass = "bg-blue-600 text-white border-blue-600";
         if (isSubmitted && isRight) btnClass = "bg-green-500 text-white border-green-500";
         if (isSubmitted && isAnswered && !isRight) btnClass = "bg-red-500 text-white border-red-500";
         if (isSubmitted && !isAnswered) btnClass = "bg-gray-100 text-gray-400 border-gray-200";
-
         return (
-          <button
-            key={q.id}
-            onClick={() => scrollToQuestion(q.id)}
-            className={`w-9 h-9 sm:w-10 sm:h-10 rounded border text-sm font-medium flex items-center justify-center transition-colors ${btnClass}`}
-          >
+          <button key={q.id} onClick={() => scrollToQuestion(q.id)} className={`w-9 h-9 sm:w-10 sm:h-10 rounded border text-sm font-medium flex items-center justify-center transition-colors ${btnClass}`}>
             {q.id}
           </button>
         );
@@ -232,12 +250,18 @@ export default function App() {
       `}</style>
 
       <header className="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="font-bold text-xl text-blue-700 truncate mr-4">Đề kiểm tra UI/UX Design</h1>
-          {isSubmitted && (
-            <div className="font-bold text-lg text-green-600 px-4 py-1 bg-green-50 rounded-lg">
-              Điểm: <span className="text-2xl">{score}</span>/{rawData.length}
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
+          <button onClick={onBack} className="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center space-x-2">
+            <ArrowLeft size={16} />
+            <span className="hidden sm:inline">Quay lại</span>
+          </button>
+          <h1 className="font-bold text-lg sm:text-xl text-blue-700 truncate">{quiz.title}</h1>
+          {isSubmitted ? (
+            <div className="font-bold text-sm sm:text-lg text-green-600 px-3 py-1 bg-green-50 rounded-lg whitespace-nowrap">
+              Điểm: <span className="text-lg sm:text-2xl">{score}</span>/{data.length}
             </div>
+          ) : (
+            <div className="w-[86px] sm:w-[130px]" />
           )}
         </div>
       </header>
@@ -250,26 +274,19 @@ export default function App() {
                 <Check size={32} strokeWidth={3} />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Kết quả bài làm</h2>
-              <div className="text-4xl font-bold text-blue-600 mb-2">{score} <span className="text-xl text-gray-500">/ {rawData.length}</span></div>
-              <p className="text-gray-600">
-                Bạn đã trả lời đúng {score} trên tổng số {rawData.length} câu hỏi.
-              </p>
+              <div className="text-4xl font-bold text-blue-600 mb-2">{score} <span className="text-xl text-gray-500">/ {data.length}</span></div>
+              <p className="text-gray-600">Bạn đã trả lời đúng {score} trên tổng số {data.length} câu hỏi.</p>
             </div>
           )}
 
-          {rawData.map((q) => {
+          {data.map((q) => {
             const userAns = answers[q.id] || [];
             const isAnsMultiple = q.ans.length > 1;
             const isRight = isCorrect(userAns, q.ans);
-
             return (
-              <div id={`question-${q.id}`} key={q.id} className={`bg-white rounded-xl shadow-sm border p-4 sm:p-6 mb-6 scroll-mt-24 transition-colors ${
-                isSubmitted ? (isRight ? 'border-green-300 bg-green-50/20' : 'border-red-300 bg-red-50/20') : 'border-gray-200'
-              }`}>
+              <div id={`question-${q.id}`} key={q.id} className={`bg-white rounded-xl shadow-sm border p-4 sm:p-6 mb-6 scroll-mt-24 transition-colors ${isSubmitted ? (isRight ? 'border-green-300 bg-green-50/20' : 'border-red-300 bg-red-50/20') : 'border-gray-200'}`}>
                 <div className="flex space-x-3 sm:space-x-4 mb-4">
-                  <div className={`font-bold flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base ${
-                    isSubmitted ? (isRight ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') : 'bg-blue-100 text-blue-700'
-                  }`}>
+                  <div className={`font-bold flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm sm:text-base ${isSubmitted ? (isRight ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700') : 'bg-blue-100 text-blue-700'}`}>
                     {q.id}
                   </div>
                   <h2 className="text-gray-800 font-semibold text-base sm:text-lg pt-1 leading-snug">
@@ -277,52 +294,41 @@ export default function App() {
                     {isAnsMultiple && <span className="ml-2 text-sm font-normal text-amber-600 italic inline-block mt-1 sm:mt-0">(Chọn nhiều đáp án)</span>}
                   </h2>
                 </div>
-
                 <div className="space-y-3 pl-11 sm:pl-14">
                   {q.opts.map((opt, idx) => {
                     const isSelected = userAns.includes(idx);
                     const isCorrectAns = q.ans.includes(idx);
-
                     let statusClass = "border-gray-200 hover:bg-gray-50";
                     let iconClass = "border-gray-400 bg-white";
                     let textColor = "text-gray-800";
-
                     if (!isSubmitted) {
                       if (isSelected) {
                         statusClass = "bg-blue-50 border-blue-400";
                         iconClass = "border-blue-500 bg-blue-500 text-white";
                         textColor = "text-blue-900 font-medium";
                       }
+                    } else if (isCorrectAns) {
+                      statusClass = "bg-green-50 border-green-500";
+                      iconClass = "border-green-500 bg-green-500 text-white";
+                      textColor = "text-green-900 font-medium";
+                    } else if (isSelected && !isCorrectAns) {
+                      statusClass = "bg-red-50 border-red-400";
+                      iconClass = "border-red-500 bg-red-500 text-white";
+                      textColor = "text-red-900 line-through opacity-70";
                     } else {
-                      if (isCorrectAns) {
-                        statusClass = "bg-green-50 border-green-500";
-                        iconClass = "border-green-500 bg-green-500 text-white";
-                        textColor = "text-green-900 font-medium";
-                      } else if (isSelected && !isCorrectAns) {
-                        statusClass = "bg-red-50 border-red-400";
-                        iconClass = "border-red-500 bg-red-500 text-white";
-                        textColor = "text-red-900 line-through opacity-70";
-                      } else {
-                        statusClass = "border-gray-200 opacity-50";
-                        iconClass = "border-gray-300 bg-gray-100";
-                      }
+                      statusClass = "border-gray-200 opacity-50";
+                      iconClass = "border-gray-300 bg-gray-100";
                     }
 
                     return (
-                      <div
-                        key={idx}
-                        onClick={() => handleOptionChange(q.id, idx, isAnsMultiple)}
-                        className={`p-3 border rounded-lg transition-all flex items-start space-x-3 select-none ${statusClass} ${isSubmitted ? 'cursor-default' : 'cursor-pointer'}`}
-                      >
+                      <div key={idx} onClick={() => handleOptionChange(q.id, idx, isAnsMultiple)} className={`p-3 border rounded-lg transition-all flex items-start space-x-3 select-none ${statusClass} ${isSubmitted ? 'cursor-default' : 'cursor-pointer'}`}>
                         <div className={`mt-0.5 w-5 h-5 flex-shrink-0 flex items-center justify-center border ${isAnsMultiple ? 'rounded' : 'rounded-full'} ${iconClass}`}>
                           {!isSubmitted && isSelected && !isAnsMultiple && <div className="w-2.5 h-2.5 rounded-full bg-white" />}
                           {!isSubmitted && isSelected && isAnsMultiple && <Check size={14} strokeWidth={3} />}
                           {isSubmitted && isCorrectAns && <Check size={14} strokeWidth={3} />}
                           {isSubmitted && isSelected && !isCorrectAns && <XIcon size={14} strokeWidth={3} />}
                         </div>
-                        <div className={`${textColor} text-sm sm:text-base leading-snug`}>
-                          {opt}
-                        </div>
+                        <div className={`${textColor} text-sm sm:text-base leading-snug`}>{opt}</div>
                       </div>
                     );
                   })}
@@ -335,9 +341,7 @@ export default function App() {
                       <div>
                         <span className="font-semibold block mb-1">Đáp án đúng là:</span>
                         <ul className="list-disc pl-4 space-y-1">
-                          {q.ans.map(ansIdx => (
-                            <li key={ansIdx}>{q.opts[ansIdx]}</li>
-                          ))}
+                          {q.ans.map(ansIdx => <li key={ansIdx}>{q.opts[ansIdx]}</li>)}
                         </ul>
                       </div>
                     </div>
@@ -357,32 +361,28 @@ export default function App() {
               </div>
               <div className="text-xl font-bold text-gray-800">Không giới hạn</div>
             </div>
-
             <div className="mb-6">
               <div className="flex justify-between text-sm mb-2 font-semibold text-gray-700">
                 <span>Tiến độ làm bài:</span>
-                <span className={answeredCount === rawData.length ? 'text-green-600' : ''}>
-                  {answeredCount}/{rawData.length}
-                </span>
+                <span className={answeredCount === data.length ? 'text-green-600' : ''}>{answeredCount}/{data.length}</span>
               </div>
               <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                 <div className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
               </div>
             </div>
-
             <QuestionGrid />
-
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-gray-100 space-y-2">
               {!isSubmitted ? (
-                <button onClick={handleRequestSubmit} className="w-full py-3.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition shadow-sm hover:shadow">
-                  NỘP BÀI
-                </button>
+                <button onClick={handleRequestSubmit} className="w-full py-3.5 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition shadow-sm hover:shadow">NỘP BÀI</button>
               ) : (
                 <button onClick={handleRequestRetry} className="w-full py-3.5 bg-gray-800 text-white rounded-lg font-bold hover:bg-gray-900 transition shadow-sm flex items-center justify-center space-x-2">
                   <RefreshCw size={18} />
                   <span>LÀM LẠI</span>
                 </button>
               )}
+              <button onClick={onBack} className="w-full py-3 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50">
+                Quay lại chọn bộ câu hỏi
+              </button>
             </div>
           </div>
         </div>
@@ -391,16 +391,13 @@ export default function App() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-3 flex justify-between items-center shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.1)] z-40">
         <div className="flex flex-col">
           <span className="text-xs text-gray-500">Đã làm</span>
-          <span className="font-bold text-blue-700 text-lg leading-none">{answeredCount}/{rawData.length}</span>
+          <span className="font-bold text-blue-700 text-lg leading-none">{answeredCount}/{data.length}</span>
         </div>
         <div className="flex space-x-2">
-          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-            <Menu size={20} />
-          </button>
+          <button onClick={onBack} className="px-3 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-bold">Quay lại</button>
+          <button onClick={() => setIsMenuOpen(true)} className="p-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"><Menu size={20} /></button>
           {!isSubmitted ? (
-            <button onClick={handleRequestSubmit} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-sm">
-              Nộp bài
-            </button>
+            <button onClick={handleRequestSubmit} className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-bold shadow-sm">Nộp bài</button>
           ) : (
             <button onClick={handleRequestRetry} className="px-5 py-2.5 bg-gray-800 text-white rounded-lg font-bold shadow-sm flex items-center space-x-2">
               <RefreshCw size={16} />
@@ -415,9 +412,7 @@ export default function App() {
           <div className="bg-white p-5 rounded-t-2xl max-h-[80vh] flex flex-col animate-in slide-in-from-bottom-8 duration-200">
             <div className="flex justify-between items-center mb-5 pb-3 border-b">
               <h3 className="font-bold text-lg">Danh sách câu hỏi</h3>
-              <button onClick={() => setIsMenuOpen(false)} className="p-1 text-gray-500 hover:bg-gray-100 rounded-full">
-                <XIcon size={24} />
-              </button>
+              <button onClick={() => setIsMenuOpen(false)} className="p-1 text-gray-500 hover:bg-gray-100 rounded-full"><XIcon size={24} /></button>
             </div>
             <QuestionGrid />
           </div>
@@ -433,6 +428,38 @@ export default function App() {
         onConfirm={handleConfirmModal}
         onCancel={() => setModalConfig({ ...modalConfig, isOpen: false })}
       />
+    </div>
+  );
+};
+
+export default function App() {
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
+  const selectedQuiz = quizSets.find(set => set.id === selectedQuizId) || null;
+
+  useEffect(() => {
+    document.title = selectedQuiz ? selectedQuiz.title : "Đề kiểm tra UI/UX Design";
+  }, [selectedQuiz]);
+
+  if (selectedQuiz) {
+    return <QuizScreen quiz={selectedQuiz} onBack={() => setSelectedQuizId(null)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-gray-800 flex items-center justify-center px-4">
+      <div className="w-full max-w-3xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-blue-700 mb-3">Đề kiểm tra UI/UX Design</h1>
+          <p className="text-gray-600">Vui lòng chọn bộ câu hỏi trước khi bắt đầu làm bài.</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {quizSets.map(quiz => (
+            <button key={quiz.id} onClick={() => setSelectedQuizId(quiz.id)} className="bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md rounded-xl p-6 text-left transition-all">
+              <h2 className="text-xl font-bold text-gray-900 mb-2">{quiz.title}</h2>
+              <div className="text-blue-700 font-semibold">{quiz.data.length} câu hỏi</div>
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
